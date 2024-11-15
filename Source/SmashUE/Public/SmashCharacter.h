@@ -92,6 +92,7 @@ public:
 
 	UPROPERTY()
 	FInputMoveXEvent InputMoveXFastEvent;
+	bool IsJumping = false;
 	
 protected:
 	UPROPERTY()
@@ -102,6 +103,7 @@ private:
 	void OnInputMoveXFast(const FInputActionValue& InputActionValue);
 	void BindInputMoveXAxisAndActions(UEnhancedInputComponent* EnhancedInputComponent);
 	void OnInputMoveX(const FInputActionValue& InputActionValue);
+	void OnInputJump(const FInputActionValue& InputActionValue);
 
-#pragma endregion	
+#pragma endregion
 };

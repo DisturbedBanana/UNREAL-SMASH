@@ -129,11 +129,21 @@ void ASmashCharacter::BindInputMoveXAxisAndActions(UEnhancedInputComponent* Enha
 	{
 		EnhancedInputComponent->BindAction(InputData->InputActionMoveXFast, ETriggerEvent::Triggered, this, &ASmashCharacter::OnInputMoveXFast);
 	}
+
+	if (InputData->InputActionJump)
+	{
+		EnhancedInputComponent->BindAction(InputData->InputActionJump, ETriggerEvent::Triggered, this, &ASmashCharacter::OnInputJump);
+	}
 }
 
 void ASmashCharacter::OnInputMoveX(const FInputActionValue& InputActionValue)
 {
 	InputMoveX = InputActionValue.Get<float>();
+}
+
+void ASmashCharacter::OnInputJump(const FInputActionValue& InputActionValue)
+{
+	IsJumping = true;
 }
 
 void ASmashCharacter::OnInputMoveXFast(const FInputActionValue& InputActionValue)

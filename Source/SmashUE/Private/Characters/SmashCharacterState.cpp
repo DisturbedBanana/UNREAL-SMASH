@@ -12,6 +12,8 @@ USmashCharacterState::USmashCharacterState()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+	const USmashCharacterSettings* TempSettings = GetDefault<USmashCharacterSettings>();
+	CharacterSettings = TempSettings;
 
 	// ...
 }
@@ -25,8 +27,6 @@ void USmashCharacterState::StateInit(USmashCharacterStateMachine* InStateMachine
 {
 	StateMachine = InStateMachine;
 	Character = InStateMachine->GetCharacter();
-	const USmashCharacterSettings* TempSettings = GetDefault<USmashCharacterSettings>();
-	CharacterSettings = TempSettings;
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Init State %d"), GetStateID()));
 }
 

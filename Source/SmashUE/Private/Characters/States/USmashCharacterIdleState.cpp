@@ -38,6 +38,11 @@ void UUSmashCharacterIdleState::StateTick(float DeltaTime)
 	{
 		StateMachine->ChangeState(ESmashCharacterStateID::Walk);
 	}
+
+	if (Character->IsJumping)
+	{
+		StateMachine->ChangeState(ESmashCharacterStateID::Jump);
+	}
 }
 
 void UUSmashCharacterIdleState::OnInputMoveXFast(float InputMoveX)
