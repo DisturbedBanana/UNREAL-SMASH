@@ -5,6 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "EnhancedInputSubsystems.h"
+#include "Camera/CameraWorldSubsystem.h"
 
 
 #include "Kismet/GameplayStatics.h"
@@ -23,6 +24,8 @@ void ASmashCharacter::BeginPlay()
 	Super::BeginPlay();
 	CreateStateMachine();
 	InitStateMachine();
+
+	GetWorld()->GetSubsystem<UCameraWorldSubsystem>()->AddFollowTarget(this);
 }
 
 // Called every frame
@@ -78,7 +81,6 @@ void ASmashCharacter::RotateMeshUsingOrientX() const
 
 void ASmashCharacter::MoveCharacter(const FVector& InMovementVector, const float DeltaTime)
 {
-	if (InMovementVector == FVector::Zero()) return;
 	AddMovementInput(FVector::ForwardVector, OrientX);
 }
 

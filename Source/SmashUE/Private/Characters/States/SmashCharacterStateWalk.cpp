@@ -31,10 +31,8 @@ void USmashCharacterStateWalk::StateExit(ESmashCharacterStateID NextStateID)
 	Super::StateExit(NextStateID);
 
 	GEngine->AddOnScreenDebugMessage(-1,3,FColor::Red,"Exit StateWalk");
-	if(NextStateID == ESmashCharacterStateID::Run) return;
-	Character->CharacterMovementVector = FVector::Zero();
+	if(NextStateID == ESmashCharacterStateID::Jump) return;
 	Character->InputMoveXFastEvent.RemoveDynamic(this, &USmashCharacterStateWalk::OnInputMoveXFast);
-
 }
 
 void USmashCharacterStateWalk::StateTick(float DeltaTime)

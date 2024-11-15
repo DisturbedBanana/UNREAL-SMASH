@@ -23,7 +23,8 @@ void USmashCharacterStateRun::StateExit(ESmashCharacterStateID NextStateID)
 {
 	Super::StateExit(NextStateID);
 	GEngine->AddOnScreenDebugMessage(-1,3,FColor::Red,"Exit StateWalk");
-	Character->CharacterMovementVector = OldVector;
+	if(NextStateID == ESmashCharacterStateID::Walk) return;
+	Character->GetCharacterMovement()->MaxWalkSpeed = 0;
 }
 
 void USmashCharacterStateRun::StateTick(float DeltaTime)

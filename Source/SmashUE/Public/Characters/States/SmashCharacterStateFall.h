@@ -42,5 +42,5 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Fall")
 	float FallGravityScale = 3;
 	UPROPERTY(EditAnywhere, Category = "Fall")
-	float FallFaravityScale = 10;
+	float FallFastGravityScale = 10;
 };

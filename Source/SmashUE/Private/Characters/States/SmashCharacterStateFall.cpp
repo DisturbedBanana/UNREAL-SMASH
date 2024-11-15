@@ -3,6 +3,9 @@
 
 #include "Characters/States/SmashCharacterStateFall.h"
 
+#include "SmashCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
 
 // Sets default values for this component's properties
 USmashCharacterStateFall::USmashCharacterStateFall()
@@ -48,6 +51,8 @@ void USmashCharacterStateFall::StateEnter(ESmashCharacterStateID PreviousStateID
 {
 	Super::StateEnter(PreviousStateID);
 	GEngine->AddOnScreenDebugMessage(-1,3,FColor::Red,"Enter StateFall");
+	Character->GetCharacterMovement()->MaxWalkSpeed = FallHorizontalMoveSpeed;
+	Character->GetCharacterMovement()->AirControl = FallAirControl;
 }
 
 void USmashCharacterStateFall::StateExit(ESmashCharacterStateID NextStateID)
@@ -57,6 +62,5 @@ void USmashCharacterStateFall::StateExit(ESmashCharacterStateID NextStateID)
 
 void USmashCharacterStateFall::StateTick(float DeltaTime)
 {
-	Super::StateTick(DeltaTime);
 }
 

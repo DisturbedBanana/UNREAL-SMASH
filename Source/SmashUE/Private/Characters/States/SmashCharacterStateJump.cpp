@@ -28,7 +28,8 @@ void USmashCharacterStateJump::CalculateJumpVariables()
 	Character->GetCharacterMovement()->JumpZVelocity = (2*JumpMaxHeight) / (JumpDuration/2);
 	Character->GetCharacterMovement()->AirControl = JumpAirControl;
 	Character->GetCharacterMovement()->GravityScale = 2*JumpMaxHeight / (JumpDuration * JumpMaxHeight);
-	GEngine->AddOnScreenDebugMessage(-1,3,FColor::Blue,FString::SanitizeFloat(Character->GetCharacterMovement()->GravityScale));
+	
+	GEngine->AddOnScreenDebugMessage(-1,3,FColor::Blue,FString::SanitizeFloat(Character->GetCharacterMovement()->AirControl));
 }
 
 // Called when the game starts
@@ -60,21 +61,19 @@ void USmashCharacterStateJump::StateEnter(ESmashCharacterStateID PreviousStateID
 	Super::StateEnter(PreviousStateID);
 	CalculateJumpVariables();
 	Character->Jump();
+	Character->GetCharacterMovement()->MaxWalkSpeed = JumpWalkSpeed;
 	GEngine->AddOnScreenDebugMessage(-1,3,FColor::Red,"Enter StateJump");
 }
 
 void USmashCharacterStateJump::StateExit(ESmashCharacterStateID NextStateID)
 {
 	Super::StateExit(NextStateID);
+	Character->MoveSpeedMax = 0;
 }
 
 void USmashCharacterStateJump::StateTick(float DeltaTime)
 {
-	Super::StateTick(DeltaTime);
-	Character->CharacterMovementVector = Character->GetActorForwardVector();
-	Character->GetCharacterMovement()->MaxWalkSpeed = 125;
-
-	if (Character->GetCharacterMovement()->IsFalling())
+	if (Character->GetCharacterMovement()->Velocity.Z < 0)
 	{
 		StateMachine->ChangeState(ESmashCharacterStateID::Fall);
 	}
