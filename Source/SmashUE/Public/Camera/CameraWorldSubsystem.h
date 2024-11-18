@@ -15,6 +15,8 @@ class SMASHUE_API UCameraWorldSubsystem : public UTickableWorldSubsystem
 {
 	GENERATED_BODY()
 
+#pragma region Subsystem Overrides
+	
 public:
 	virtual void PostInitialize() override;
 
@@ -23,23 +25,63 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual TStatId GetStatId() const override {return TStatId();};
+#pragma endregion
 
-	void AddFollowTarget(UObject* FollowTarget);
-
-	void RemoveFollowTarget(UObject* FollowTarget);
-
+#pragma region Main Camera
+	
 protected:
 	UPROPERTY()
 	TObjectPtr<UCameraComponent> CameraMain;
-
-	UPROPERTY()
-	TArray<UObject*> FollowTargets;
 
 	void TickUpdateCameraPosition(float DeltaTime);
 
 	FVector CalculateAveragePositionBetweenTargets();
 
 	UCameraComponent* FindCameraByTag(const FName& Tag);
+	
+#pragma endregion
 
+#pragma region Follow Targets
+	
+public:
+	
+	void AddFollowTarget(UObject* FollowTarget);
+
+	void RemoveFollowTarget(UObject* FollowTarget);
+
+protected:
+	
+	UPROPERTY()
+	TArray<UObject*> FollowTargets;
+	
+#pragma endregion
+
+#pragma region Misc
+	
 	float CameraYPosition;
+
+#pragma endregion
+
+#pragma region Bounds
+protected:
+	UPROPERTY()
+	FVector CameraBoundsMin;
+
+	UPROPERTY()
+	FVector CameraBoundsMax;
+
+	UPROPERTY()
+	float CameraBoundsYProjectionCenter;
+
+	AActor* FindCameraBoundsActor();
+
+	void InitCameraBounds(AActor* CameraBoundsActor);
+
+	void ClampPositionIntoCameraBounds(FVector& Position);
+
+	void GetViewportBounds(FVector2D& OutViewportBoundsMin, FVector2D& OutViewportBoundsMax);
+
+	FVector CalculateWorldPositionFromViewportPosition(FVector2D& ViewportPosition);
+	
+#pragma endregion
 };
