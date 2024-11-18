@@ -24,16 +24,16 @@ public:
 
 	virtual TStatId GetStatId() const override {return TStatId();};
 
-	void AddFollowTarget(AActor* FollowTarget);
+	void AddFollowTarget(UObject* FollowTarget);
 
-	void RemoveFollowTarget(AActor* FollowTarget);
+	void RemoveFollowTarget(UObject* FollowTarget);
 
 protected:
 	UPROPERTY()
 	TObjectPtr<UCameraComponent> CameraMain;
 
 	UPROPERTY()
-	TArray<AActor*> FollowTargets;
+	TArray<UObject*> FollowTargets;
 
 	void TickUpdateCameraPosition(float DeltaTime);
 

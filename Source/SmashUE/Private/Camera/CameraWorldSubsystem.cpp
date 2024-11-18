@@ -4,6 +4,7 @@
 #include "Camera/CameraWorldSubsystem.h"
 
 #include "EngineUtils.h"
+#include "Camera/CameraFollowTarget.h"
 
 void UCameraWorldSubsystem::PostInitialize()
 {
@@ -23,12 +24,12 @@ void UCameraWorldSubsystem::Tick(float DeltaTime)
 	TickUpdateCameraPosition(DeltaTime);
 }
 
-void UCameraWorldSubsystem::AddFollowTarget(AActor* FollowTarget)
+void UCameraWorldSubsystem::AddFollowTarget(UObject* FollowTarget)
 {
 	FollowTargets.Add(FollowTarget);
 }
 
-void UCameraWorldSubsystem::RemoveFollowTarget(AActor* FollowTarget)
+void UCameraWorldSubsystem::RemoveFollowTarget(UObject* FollowTarget)
 {
 	FollowTargets.Remove(FollowTarget);
 }
@@ -51,11 +52,18 @@ FVector UCameraWorldSubsystem::CalculateAveragePositionBetweenTargets()
 	if (FollowTargets.Num() == 0) return FVector::ZeroVector;
 
 	FVector AveragePosition = FVector::ZeroVector;
-	for (AActor* Target : FollowTargets)
+	for (UObject* Target : FollowTargets)
 	{
-		if (Target)
+		if (Target->GetClass()->ImplementsInterface(UCameraFollowTarget::StaticClass()))
 		{
-			AveragePosition += Target->GetActorLocation();
+			TScriptInterface<ICameraFollowTarget> CameraFollowTarget;
+			CameraFollowTarget.SetObject(Target);
+			CameraFollowTarget.SetInterface(Cast<ICameraFollowTarget>(Target));
+			
+			if (CameraFollowTarget->IsFollowable())
+			{
+				AveragePosition += CameraFollowTarget->GetFollowPosition();
+			}
 		}
 	}
 
