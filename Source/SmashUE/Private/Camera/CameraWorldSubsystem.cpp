@@ -22,12 +22,15 @@ void UCameraWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 	if (CameraBoundsActor != nullptr)
 	{
 		InitCameraBounds(CameraBoundsActor);
-	}	
+	}
+
+	InitCameraZoomParameters();
 }
 
 void UCameraWorldSubsystem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	TickUpdateCameraZoom(DeltaTime);
 	TickUpdateCameraPosition(DeltaTime);
 }
 
@@ -60,15 +63,12 @@ void UCameraWorldSubsystem::InitCameraBounds(AActor* CameraBoundsActor)
 	FVector BoundsCenter;
 	FVector BoundsExtent;
 	CameraBoundsActor->GetActorBounds(false, BoundsCenter, BoundsExtent);
-
-	// Calculate CameraBoundsMin and CameraBoundsMax
+	
 	CameraBoundsMin = FVector(BoundsCenter.X - BoundsExtent.X, CameraYPosition, BoundsCenter.Z - BoundsExtent.Z);
 	CameraBoundsMax = FVector(BoundsCenter.X + BoundsExtent.X, CameraYPosition, BoundsCenter.Z + BoundsExtent.Z);
-
-	// Set CameraYProjectionCenter
+	
 	CameraBoundsYProjectionCenter = BoundsCenter.Y;
-
-	// Debug output
+	
 	GEngine->AddOnScreenDebugMessage(-1, 50.f, FColor::Green, FString::Printf(TEXT("Camera Bounds Min: %s"), *CameraBoundsMin.ToString()));
 	GEngine->AddOnScreenDebugMessage(-1, 50.f, FColor::Green, FString::Printf(TEXT("Camera Bounds Max: %s"), *CameraBoundsMax.ToString()));
 	GEngine->AddOnScreenDebugMessage(-1, 50.f, FColor::Green, FString::Printf(TEXT("Camera Y Projection Center: %f"), CameraBoundsYProjectionCenter));
@@ -127,6 +127,49 @@ FVector UCameraWorldSubsystem::CalculateWorldPositionFromViewportPosition(FVecto
 	return WorldPosition;
 }
 
+float UCameraWorldSubsystem::CalculateGreatestDistanceBetweenTargets()
+{
+	float GreatestDistance = 0.f;
+	
+	for (int32 i = 0; i < FollowTargets.Num(); ++i)
+	{
+		UObject* TargetA = FollowTargets[i];
+		if (!TargetA || !TargetA->GetClass()->ImplementsInterface(UCameraFollowTarget::StaticClass())) continue;
+
+		TScriptInterface<ICameraFollowTarget> CameraFollowTargetA;
+		CameraFollowTargetA.SetObject(TargetA);
+		CameraFollowTargetA.SetInterface(Cast<ICameraFollowTarget>(TargetA));
+
+		if (!CameraFollowTargetA->IsFollowable()) continue;
+
+		FVector PositionA = CameraFollowTargetA->GetFollowPosition();
+
+		for (int32 j = i + 1; j < FollowTargets.Num(); ++j)
+		{
+			UObject* TargetB = FollowTargets[j];
+			if (!TargetB || !TargetB->GetClass()->ImplementsInterface(UCameraFollowTarget::StaticClass())) continue;
+
+			TScriptInterface<ICameraFollowTarget> CameraFollowTargetB;
+			CameraFollowTargetB.SetObject(TargetB);
+			CameraFollowTargetB.SetInterface(Cast<ICameraFollowTarget>(TargetB));
+
+			if (!CameraFollowTargetB->IsFollowable()) continue;
+
+			FVector PositionB = CameraFollowTargetB->GetFollowPosition();
+			
+			float Distance = FVector::Dist(PositionA, PositionB);
+			
+			if (Distance > GreatestDistance)
+			{
+				GreatestDistance = Distance;
+			}
+		}
+	}
+
+	return GreatestDistance;
+}
+
+
 void UCameraWorldSubsystem::TickUpdateCameraPosition(float DeltaTime)
 {
 	if (FollowTargets.Num() == 0 || !CameraMain) return;
@@ -139,6 +182,29 @@ void UCameraWorldSubsystem::TickUpdateCameraPosition(float DeltaTime)
 
 	CameraMain->SetWorldLocation(NewPosition);
 }
+
+void UCameraWorldSubsystem::TickUpdateCameraZoom(float DeltaTime)
+{
+	if (CameraMain == nullptr) return;
+	
+	float GreatestDistanceBetweenTargets = CalculateGreatestDistanceBetweenTargets();
+
+	float CameraZoomDistanceBetweenTargetsMin = 100.f; 
+	float CameraZoomDistanceBetweenTargetsMax = 1000.f; 
+	
+	float ZoomPercent = 1.f - (GreatestDistanceBetweenTargets - CameraZoomDistanceBetweenTargetsMin) /
+						(CameraZoomDistanceBetweenTargetsMax - CameraZoomDistanceBetweenTargetsMin);
+	
+	ZoomPercent = FMath::Clamp(ZoomPercent, 0.f, 1.f);
+	
+	float TargetYPosition = FMath::Lerp(CameraZoomYMin, CameraZoomYMax, ZoomPercent);
+	
+	FVector CurrentPosition = CameraMain->GetComponentLocation();
+	CurrentPosition.Y = FMath::FInterpTo(CurrentPosition.Y, TargetYPosition, DeltaTime, 5.f);
+	CameraMain->SetWorldLocation(CurrentPosition);
+}
+
+
 
 FVector UCameraWorldSubsystem::CalculateAveragePositionBetweenTargets()
 {
@@ -182,3 +248,31 @@ UCameraComponent* UCameraWorldSubsystem::FindCameraByTag(const FName& Tag)
 	}
 	return nullptr;
 }
+
+void UCameraWorldSubsystem::InitCameraZoomParameters()
+{
+	for (TActorIterator<AActor> It(GetWorld()); It; ++It)
+	{
+		AActor* Actor = *It;
+
+		if (Actor->ActorHasTag("CameraDistanceMin"))
+		{
+			UCameraComponent* CameraComponent = Actor->FindComponentByClass<UCameraComponent>();
+			if (CameraComponent)
+			{
+				FVector CameraLocation = CameraComponent->GetComponentLocation();
+				CameraZoomYMin = CameraLocation.Y; 
+			}
+		}
+		else if (Actor->ActorHasTag("CameraDistanceMax"))
+		{
+			UCameraComponent* CameraComponent = Actor->FindComponentByClass<UCameraComponent>();
+			if (CameraComponent)
+			{
+				FVector CameraLocation = CameraComponent->GetComponentLocation();
+				CameraZoomYMax = CameraLocation.Y; 
+			}
+		}
+	}
+}
+

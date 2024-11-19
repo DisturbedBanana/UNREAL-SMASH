@@ -35,9 +35,16 @@ protected:
 
 	void TickUpdateCameraPosition(float DeltaTime);
 
+	void TickUpdateCameraZoom(float DeltaTime);
+
 	FVector CalculateAveragePositionBetweenTargets();
 
 	UCameraComponent* FindCameraByTag(const FName& Tag);
+
+	void InitCameraZoomParameters();
+
+	float CameraZoomYMin;
+	float CameraZoomYMax;
 	
 #pragma endregion
 
@@ -82,6 +89,8 @@ protected:
 	void GetViewportBounds(FVector2D& OutViewportBoundsMin, FVector2D& OutViewportBoundsMax);
 
 	FVector CalculateWorldPositionFromViewportPosition(FVector2D& ViewportPosition);
+
+	float CalculateGreatestDistanceBetweenTargets();
 	
 #pragma endregion
 };
