@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Camera/CameraComponent.h"
+#include "CameraSettings.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "CameraWorldSubsystem.generated.h"
 
@@ -39,7 +40,7 @@ protected:
 
 	FVector CalculateAveragePositionBetweenTargets();
 
-	UCameraComponent* FindCameraByTag(const FName& Tag);
+	UCameraComponent* FindCameraByTag();
 
 	void InitCameraZoomParameters();
 
@@ -66,6 +67,8 @@ protected:
 #pragma region Misc
 	
 	float CameraYPosition;
+
+	const UCameraSettings* CameraSettings;
 
 #pragma endregion
 

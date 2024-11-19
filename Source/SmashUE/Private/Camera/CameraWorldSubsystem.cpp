@@ -15,7 +15,8 @@ void UCameraWorldSubsystem::PostInitialize()
 void UCameraWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 {
 	Super::OnWorldBeginPlay(InWorld);
-	CameraMain = FindCameraByTag(TEXT("CameraMain"));
+	CameraSettings = GetDefault<UCameraSettings>();
+	CameraMain = FindCameraByTag();
 	CameraYPosition = CameraMain->GetComponentTransform().GetLocation().Y;
 
 	AActor* CameraBoundsActor = FindCameraBoundsActor();
@@ -49,7 +50,7 @@ AActor* UCameraWorldSubsystem::FindCameraBoundsActor()
 	for (TActorIterator<AActor> It(GetWorld()); It; ++It)
 	{
 		AActor* Actor = *It;
-		if (Actor->ActorHasTag("CameraBounds"))
+		if (Actor->ActorHasTag(CameraSettings->CameraBoundsTag))
 		{
 			return Actor;
 		}
@@ -192,8 +193,8 @@ void UCameraWorldSubsystem::TickUpdateCameraZoom(float DeltaTime)
 	float CameraZoomDistanceBetweenTargetsMin = 100.f; 
 	float CameraZoomDistanceBetweenTargetsMax = 1000.f; 
 	
-	float ZoomPercent = 1.f - (GreatestDistanceBetweenTargets - CameraZoomDistanceBetweenTargetsMin) /
-						(CameraZoomDistanceBetweenTargetsMax - CameraZoomDistanceBetweenTargetsMin);
+	float ZoomPercent = 1.f - (GreatestDistanceBetweenTargets - CameraSettings->DistanceBetweenTargetsMin) /
+						(CameraSettings->DistanceBetweenTargetsMax - CameraSettings->DistanceBetweenTargetsMin);
 	
 	ZoomPercent = FMath::Clamp(ZoomPercent, 0.f, 1.f);
 	
@@ -232,12 +233,12 @@ FVector UCameraWorldSubsystem::CalculateAveragePositionBetweenTargets()
 	return AveragePosition;
 }
 
-UCameraComponent* UCameraWorldSubsystem::FindCameraByTag(const FName& Tag)
+UCameraComponent* UCameraWorldSubsystem::FindCameraByTag()
 {
 	for (TActorIterator<AActor> It(GetWorld()); It; ++It)
 	{
 		AActor* Actor = *It;
-		if (Actor->ActorHasTag(Tag))
+		if (Actor->ActorHasTag(CameraSettings->CameraMainTag))
 		{
 			UCameraComponent* CameraComponent = Actor->FindComponentByClass<UCameraComponent>();
 			if (CameraComponent)
@@ -255,7 +256,7 @@ void UCameraWorldSubsystem::InitCameraZoomParameters()
 	{
 		AActor* Actor = *It;
 
-		if (Actor->ActorHasTag("CameraDistanceMin"))
+		if (Actor->ActorHasTag(CameraSettings->CameraDistanceMinTag))
 		{
 			UCameraComponent* CameraComponent = Actor->FindComponentByClass<UCameraComponent>();
 			if (CameraComponent)
@@ -264,7 +265,7 @@ void UCameraWorldSubsystem::InitCameraZoomParameters()
 				CameraZoomYMin = CameraLocation.Y; 
 			}
 		}
-		else if (Actor->ActorHasTag("CameraDistanceMax"))
+		else if (Actor->ActorHasTag(CameraSettings->CameraDistanceMaxTag))
 		{
 			UCameraComponent* CameraComponent = Actor->FindComponentByClass<UCameraComponent>();
 			if (CameraComponent)
