@@ -32,4 +32,10 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, Category = Camera)
 	float DistanceBetweenTargetsMax;
+
+	UPROPERTY(Config, EditAnywhere, Category = Camera)
+	float SizeDampingFactor;
+
+	UPROPERTY(Config, EditAnywhere, Category = Camera)
+	float PositionDampingFactor;
 };
