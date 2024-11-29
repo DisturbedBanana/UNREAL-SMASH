@@ -175,10 +175,8 @@ void UCameraWorldSubsystem::TickUpdateCameraPosition(float DeltaTime)
 {
 	if (FollowTargets.Num() == 0 || !CameraMain) return;
 
-	// Calculate the average position of the targets
 	FVector TargetPosition = CalculateAveragePositionBetweenTargets();
 
-	// Smoothly interpolate the camera position toward the target position using PositionDampingFactor
 	FVector CurrentPosition = CameraMain->GetComponentLocation();
 	float InterpolationFactor = FMath::Clamp(CameraSettings->PositionDampingFactor * DeltaTime, 0.f, 1.f);
 	FVector NewPosition = FMath::Lerp(CurrentPosition, TargetPosition, InterpolationFactor);
@@ -192,18 +190,14 @@ void UCameraWorldSubsystem::TickUpdateCameraZoom(float DeltaTime)
 {
 	if (CameraMain == nullptr) return;
 
-	// Calculate the greatest distance between targets
 	float GreatestDistanceBetweenTargets = CalculateGreatestDistanceBetweenTargets();
 
-	// Calculate the zoom percent (inverse lerp logic)
 	float ZoomPercent = 1.f - (GreatestDistanceBetweenTargets - CameraSettings->DistanceBetweenTargetsMin) /
 						(CameraSettings->DistanceBetweenTargetsMax - CameraSettings->DistanceBetweenTargetsMin);
 	ZoomPercent = FMath::Clamp(ZoomPercent, 0.f, 1.f);
 
-	// Target Y position based on zoom percent
 	float TargetYPosition = FMath::Lerp(CameraZoomYMin, CameraZoomYMax, ZoomPercent);
 
-	// Smoothly interpolate the Y position of the camera using SizeDampingFactor
 	FVector CurrentPosition = CameraMain->GetComponentLocation();
 	float InterpolationFactor = FMath::Clamp(CameraSettings->SizeDampingFactor * DeltaTime, 0.f, 1.f);
 	CurrentPosition.Y = FMath::Lerp(CurrentPosition.Y, TargetYPosition, InterpolationFactor);

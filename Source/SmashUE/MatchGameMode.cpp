@@ -2,20 +2,31 @@
 
 
 #include "MatchGameMode.h"
-#include "SmashCharacter.h"
 
+#include "LocalMultiplayerSubsystem.h"
+#include "SmashCharacter.h"
 #include "Arena/ArenaPlayerStart.h"
 #include "Arena/ArenaSettings.h"
 #include "Kismet/GameplayStatics.h"
-#include "Slate/SGameLayerManager.h"
 
 void AMatchGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-
+	CreateAndInitPlayers();
 	TArray<AArenaPlayerStart*> PlayerStartPoints;
 	FindPlayerStartActorsInArena(PlayerStartPoints);
 	SpawnCharacters(PlayerStartPoints);
+}
+
+void AMatchGameMode::CreateAndInitPlayers() const
+{
+	UGameInstance* GameInstance = GetWorld()->GetGameInstance();
+	if(GameInstance == nullptr) return;
+
+	ULocalMultiplayerSubsystem* LocalMultiplayerSubsystem = GameInstance->GetSubsystem<ULocalMultiplayerSubsystem>();
+	if(LocalMultiplayerSubsystem == nullptr) return;
+
+	LocalMultiplayerSubsystem->CreateAndInitPlayers(ELocalMultiplayerInputMappingType::InGame);
 }
 
 void AMatchGameMode::FindPlayerStartActorsInArena(TArray<AArenaPlayerStart*>& ResultActors)
