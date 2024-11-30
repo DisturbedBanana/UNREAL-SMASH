@@ -32,6 +32,7 @@ public:
 
 	void AssignGamepadInputMapping(int PlayerIndex, ELocalMultiplayerInputMappingType MappingType) const;
 
+	UPROPERTY()
 	const ULocalMultiplayerSettings* MultiplayerSettings;
 	
 protected:

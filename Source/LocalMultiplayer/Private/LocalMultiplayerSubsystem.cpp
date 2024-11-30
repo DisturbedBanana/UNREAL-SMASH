@@ -9,19 +9,19 @@ void ULocalMultiplayerSubsystem::CreateAndInitPlayers(ELocalMultiplayerInputMapp
 {
     UE_LOG(LogTemp, Warning, TEXT("MultiplayerSettings->GetNbKeyboardProfiles() -> %d"), MultiplayerSettings->GetNbKeyboardProfiles());
     // Keyboards
+    int CurrentPlayerIndex = 0;
+    
     for (int i = 0; i < MultiplayerSettings->GetNbKeyboardProfiles(); ++i)
     {
-        int PlayerIndex = AssignNewPlayerToKeyboardProfile(i);
-        UE_LOG(LogTemp, Warning, TEXT("PlayerIndex -> %d"), PlayerIndex);
-        AssignKeyboardMapping(PlayerIndex, i, MappingType);
+        UGameplayStatics::CreatePlayer(this, CurrentPlayerIndex, true);
+        CurrentPlayerIndex++;
     }
 
-    // Gamepads
+    //Gamepads
     for (int DeviceID = 0; DeviceID < MultiplayerSettings->NbMaxGamepads; ++DeviceID)
     {
-        LastAssignedPlayerIndex = 1;
-        int PlayerIndex = AssignNewPlayerToGamePadDeviceID(DeviceID);
-        AssignGamepadInputMapping(PlayerIndex, MappingType);
+        UGameplayStatics::CreatePlayer(this, CurrentPlayerIndex, true);
+        CurrentPlayerIndex++;
     }
 
     UE_LOG(LogTemp, Warning, TEXT("GetGameInstance()->GetNumLocalPlayers -> %d"), GetGameInstance()->GetNumLocalPlayers());
@@ -36,7 +36,7 @@ int ULocalMultiplayerSubsystem::GetAssignedPlayerIndexFromKeyboardProfileIndex(i
 int ULocalMultiplayerSubsystem::AssignNewPlayerToKeyboardProfile(int KeyboardProfileIndex)
 {
     int PlayerIndex = LastAssignedPlayerIndex++;
-    UGameplayStatics::CreatePlayer(this, PlayerIndex, true);
+    AssignKeyboardMapping(PlayerIndex, KeyboardProfileIndex, ELocalMultiplayerInputMappingType::InGame);
     PlayerIndexFromKeyboardProfileIndex.Add(KeyboardProfileIndex, PlayerIndex);
     return PlayerIndex;
 }
