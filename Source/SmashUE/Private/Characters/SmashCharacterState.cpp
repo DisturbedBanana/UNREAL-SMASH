@@ -42,8 +42,8 @@ void USmashCharacterState::StateExit(ESmashCharacterStateID NextStateID)
 
 void USmashCharacterState::StateTick(float DeltaTime)
 {
-	if (Character->IsJumping)
-	{
-		StateMachine->ChangeState(ESmashCharacterStateID::Jump);
-	}
+	// if (Character->IsJumping)
+	// {
+	// 	StateMachine->ChangeState(ESmashCharacterStateID::Jump);
+	// }
 }

@@ -50,7 +50,7 @@ void USmashCharacterStateFall::StateInit(USmashCharacterStateMachine* InStateMac
 void USmashCharacterStateFall::StateEnter(ESmashCharacterStateID PreviousStateID)
 {
 	Super::StateEnter(PreviousStateID);
-	GEngine->AddOnScreenDebugMessage(-1,3,FColor::Red,"Enter StateFall");
+
 	Character->GetCharacterMovement()->MaxWalkSpeed = FallHorizontalMoveSpeed;
 	Character->GetCharacterMovement()->AirControl = FallAirControl;
 }
@@ -58,9 +58,21 @@ void USmashCharacterStateFall::StateEnter(ESmashCharacterStateID PreviousStateID
 void USmashCharacterStateFall::StateExit(ESmashCharacterStateID NextStateID)
 {
 	Super::StateExit(NextStateID);
+
+	Character->NbOfJumps = 2;
 }
 
 void USmashCharacterStateFall::StateTick(float DeltaTime)
 {
+	Super::StateTick(DeltaTime);
+	
+	if (Character->GetCharacterMovement()->Velocity.Z == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("RESET JUMPS"));
+		StateMachine->ChangeState(ESmashCharacterStateID::Idle);
+	}
+
+	Character->SetOrientX(Character->GetInputMoveX());
+	Character->AddMovementInput(FVector::ForwardVector * FallAirControl, Character->GetOrientX());
 }
 

@@ -59,10 +59,13 @@ void USmashCharacterStateJump::StateInit(USmashCharacterStateMachine* InStateMac
 void USmashCharacterStateJump::StateEnter(ESmashCharacterStateID PreviousStateID)
 {
 	Super::StateEnter(PreviousStateID);
+	
+	if (Character->NbOfJumps > 0)
+	{
 	CalculateJumpVariables();
 	Character->Jump();
 	Character->GetCharacterMovement()->MaxWalkSpeed = JumpWalkSpeed;
-	GEngine->AddOnScreenDebugMessage(-1,3,FColor::Red,"Enter StateJump");
+	}
 }
 
 void USmashCharacterStateJump::StateExit(ESmashCharacterStateID NextStateID)
@@ -73,8 +76,13 @@ void USmashCharacterStateJump::StateExit(ESmashCharacterStateID NextStateID)
 
 void USmashCharacterStateJump::StateTick(float DeltaTime)
 {
+	Super::StateTick(DeltaTime);
+	
 	if (Character->GetCharacterMovement()->Velocity.Z < 0)
 	{
 		StateMachine->ChangeState(ESmashCharacterStateID::Fall);
 	}
+
+	Character->SetOrientX(Character->GetInputMoveX());
+	Character->AddMovementInput(FVector::ForwardVector, Character->GetOrientX());
 }

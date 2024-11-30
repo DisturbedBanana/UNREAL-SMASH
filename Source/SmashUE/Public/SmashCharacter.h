@@ -53,6 +53,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	float MoveSpeedMax = 250.f;
+
+	UPROPERTY()
+	int NbOfJumps = 2;
 	
 protected:
 	UFUNCTION()
@@ -93,11 +96,13 @@ public:
 
 	UPROPERTY()
 	FInputMoveXEvent InputMoveXFastEvent;
-	bool IsJumping = false;
+	bool HasJumped = false;
 	
 protected:
 	UPROPERTY()
 	float InputMoveX = 0.0f;
+
+	void CharacterJump();
 
 
 private:

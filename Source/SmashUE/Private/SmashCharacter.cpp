@@ -6,6 +6,7 @@
 #include "Engine/LocalPlayer.h"
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraWorldSubsystem.h"
+#include "Characters/SmashCharacterStateID.h"
 
 
 #include "Kismet/GameplayStatics.h"
@@ -145,7 +146,13 @@ void ASmashCharacter::OnInputMoveX(const FInputActionValue& InputActionValue)
 
 void ASmashCharacter::OnInputJump(const FInputActionValue& InputActionValue)
 {
-	IsJumping = true;
+	if (!HasJumped)
+	{
+	HasJumped = true;
+	CharacterJump();
+	//UE_LOG(LogTemp, Warning, TEXT("JUMP INPUT"));
+		
+	}
 }
 
 FVector ASmashCharacter::GetFollowPosition()
@@ -158,8 +165,22 @@ bool ASmashCharacter::IsFollowable()
 	return true;
 }
 
+void ASmashCharacter::CharacterJump()
+{
+	NbOfJumps--;
+	
+	if (NbOfJumps > 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("JUMP, number of jumps -> %d"), NbOfJumps);
+		StateMachine->ChangeState(ESmashCharacterStateID::Jump);
+	}
+	HasJumped = false;
+}
+
 void ASmashCharacter::OnInputMoveXFast(const FInputActionValue& InputActionValue)
 {
 	InputMoveX = InputActionValue.Get<float>();
 	InputMoveXFastEvent.Broadcast(InputMoveX);
 }
+
+

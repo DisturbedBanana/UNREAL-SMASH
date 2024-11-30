@@ -16,37 +16,6 @@ void ULocalMultiplayerGameViewportClient::PostInitProperties()
 
 bool ULocalMultiplayerGameViewportClient::InputKey(const FInputKeyEventArgs& EventArgs)
 {
-    // const ULocalMultiplayerSettings* MultiplayerSettings = GetDefault<ULocalMultiplayerSettings>();
-    // ULocalMultiplayerSubsystem* Subsystem = GetGameInstance()->GetSubsystem<ULocalMultiplayerSubsystem>();
-    //
-    // if (MultiplayerSettings == nullptr || Subsystem == nullptr) return false;
-    //
-    // int ProfileIndex = MultiplayerSettings->FindKeyBoardProfileIndexFromKey(EventArgs.Key, ELocalMultiplayerInputMappingType::InGame);
-    // int PlayerIndex = EventArgs.IsGamepad() ? Subsystem->GetAssignedPlayerIndexFromGamePadDeviceID(EventArgs.InputDevice.GetId())
-    //                                         : Subsystem->GetAssignedPlayerIndexFromKeyboardProfileIndex(ProfileIndex);
-    //
-    // if (PlayerIndex < 0) return false;
-    //
-    // ULocalPlayer* Player = GetGameInstance()->GetLocalPlayerByIndex(PlayerIndex);
-    // if (Player == nullptr) return false;
-    //
-    // APlayerController* PlayerController = Player->GetPlayerController(GetWorld());
-    // if (PlayerController == nullptr) return false;
-    //
-    // //TEST DYNAMIC KEYBOARD PROFILE ASSIGNMENT
-    //
-    //
-    // if (Subsystem->GetAssignedPlayerIndexFromKeyboardProfileIndex(ProfileIndex) == -1)
-    // {
-    //     //Subsystem->AssignKeyboardMapping(PlayerIndex, ProfileIndex, ELocalMultiplayerInputMappingType::InGame);
-    //     UE_LOG(LogTemp, Warning, TEXT("PlayerIndex -> %d"), Subsystem->GetAssignedPlayerIndexFromKeyboardProfileIndex(ProfileIndex));
-    //     Subsystem->AssignNewPlayerToKeyboardProfile(ProfileIndex);
-    // }
-    //
-    // //END TEST
-    //
-    // FInputKeyParams OutParams(EventArgs.Key, EventArgs.Event, EventArgs.AmountDepressed, EventArgs.IsGamepad(), EventArgs.InputDevice);
-    // return PlayerController->InputKey(OutParams);
     const ULocalMultiplayerSettings* MultiplayerSettings = GetDefault<ULocalMultiplayerSettings>();
     ULocalMultiplayerSubsystem* Subsystem = GetGameInstance()->GetSubsystem<ULocalMultiplayerSubsystem>();
 
