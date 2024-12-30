@@ -110,8 +110,7 @@ private:
 	void BindInputMoveXAxisAndActions(UEnhancedInputComponent* EnhancedInputComponent);
 	void OnInputMoveX(const FInputActionValue& InputActionValue);
 	void OnInputJump(const FInputActionValue& InputActionValue);
-
-
+	void OnInputJumpReleased(const FInputActionValue& InputActionValue);
 
 private:
 #pragma endregion

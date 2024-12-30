@@ -59,7 +59,10 @@ void USmashCharacterStateFall::StateExit(ESmashCharacterStateID NextStateID)
 {
 	Super::StateExit(NextStateID);
 
-	Character->NbOfJumps = 2;
+	if (NextStateID == ESmashCharacterStateID::Idle)
+	{
+	}
+		Character->NbOfJumps = 2;
 }
 
 void USmashCharacterStateFall::StateTick(float DeltaTime)

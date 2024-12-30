@@ -15,7 +15,7 @@ void USmashCharacterStateWalk::StateEnter(ESmashCharacterStateID PreviousStateID
 {
 	Super::StateEnter(PreviousStateID);
 
-	GEngine->AddOnScreenDebugMessage(-1,3,FColor::Red,"Enter StateWalk");
+	//GEngine->AddOnScreenDebugMessage(-1,3,FColor::Red,"Enter StateWalk");
 	Character->CharacterMovementVector = Character->GetActorForwardVector();
 	Character->GetCharacterMovement()->MaxWalkSpeed = 125;
 	Character->InputMoveXFastEvent.AddDynamic(this, &USmashCharacterStateWalk::OnInputMoveXFast);
@@ -30,7 +30,7 @@ void USmashCharacterStateWalk::StateExit(ESmashCharacterStateID NextStateID)
 {
 	Super::StateExit(NextStateID);
 
-	GEngine->AddOnScreenDebugMessage(-1,3,FColor::Red,"Exit StateWalk");
+	//GEngine->AddOnScreenDebugMessage(-1,3,FColor::Red,"Exit StateWalk");
 	if(NextStateID == ESmashCharacterStateID::Jump) return;
 	Character->InputMoveXFastEvent.RemoveDynamic(this, &USmashCharacterStateWalk::OnInputMoveXFast);
 }

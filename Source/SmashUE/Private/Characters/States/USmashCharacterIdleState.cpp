@@ -15,18 +15,16 @@ ESmashCharacterStateID UUSmashCharacterIdleState::GetStateID()
 void UUSmashCharacterIdleState::StateEnter(ESmashCharacterStateID PreviousStateID)
 {
 	Super::StateEnter(PreviousStateID);
-
-	GEngine->AddOnScreenDebugMessage(-1,3,FColor::Red,"Enter StateIdle");
+	
 	Character->GetCharacterMovement()->MaxWalkSpeed = 0;
-
+	//UE_LOG(LogTemp, Warning, TEXT("IDLE"));
 	Character->InputMoveXFastEvent.AddDynamic(this, &UUSmashCharacterIdleState::OnInputMoveXFast);
 }
 
 void UUSmashCharacterIdleState::StateExit(ESmashCharacterStateID NextStateID)
 {
 	Super::StateExit(NextStateID);
-
-	GEngine->AddOnScreenDebugMessage(-1,3,FColor::Red,"Exit StateIdle");
+	
 	Character->InputMoveXFastEvent.RemoveDynamic(this, &UUSmashCharacterIdleState::OnInputMoveXFast);
 }
 

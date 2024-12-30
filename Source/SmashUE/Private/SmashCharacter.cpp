@@ -107,8 +107,6 @@ void ASmashCharacter::SetupMappingContextIntoController() const
 
 	UEnhancedInputLocalPlayerSubsystem* InputSystem = Player->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 	if (InputSystem == nullptr) return;
-
-	//InputSystem->AddMappingContext(InputMappingContext, 0);
 }
 
 float ASmashCharacter::GetInputMoveX() const
@@ -135,7 +133,8 @@ void ASmashCharacter::BindInputMoveXAxisAndActions(UEnhancedInputComponent* Enha
 
 	if (InputData->InputActionJump)
 	{
-		EnhancedInputComponent->BindAction(InputData->InputActionJump, ETriggerEvent::Triggered, this, &ASmashCharacter::OnInputJump);
+		EnhancedInputComponent->BindAction(InputData->InputActionJump, ETriggerEvent::Started, this, &ASmashCharacter::OnInputJump);
+		EnhancedInputComponent->BindAction(InputData->InputActionJump, ETriggerEvent::Completed, this, &ASmashCharacter::OnInputJumpReleased);
 	}
 }
 
@@ -148,11 +147,14 @@ void ASmashCharacter::OnInputJump(const FInputActionValue& InputActionValue)
 {
 	if (!HasJumped)
 	{
-	HasJumped = true;
 	CharacterJump();
-	//UE_LOG(LogTemp, Warning, TEXT("JUMP INPUT"));
-		
+	HasJumped = true;
 	}
+}
+
+void ASmashCharacter::OnInputJumpReleased(const FInputActionValue& InputActionValue)
+{
+	HasJumped = false;
 }
 
 FVector ASmashCharacter::GetFollowPosition()
@@ -167,14 +169,13 @@ bool ASmashCharacter::IsFollowable()
 
 void ASmashCharacter::CharacterJump()
 {
-	NbOfJumps--;
-	
 	if (NbOfJumps > 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("JUMP, number of jumps -> %d"), NbOfJumps);
+		NbOfJumps--;
+		StateMachine->ChangeState(ESmashCharacterStateID::Idle);
+		
 		StateMachine->ChangeState(ESmashCharacterStateID::Jump);
 	}
-	HasJumped = false;
 }
 
 void ASmashCharacter::OnInputMoveXFast(const FInputActionValue& InputActionValue)

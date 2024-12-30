@@ -15,14 +15,14 @@ ESmashCharacterStateID USmashCharacterStateRun::GetStateID()
 void USmashCharacterStateRun::StateEnter(ESmashCharacterStateID PreviousStateID)
 {
 	Super::StateEnter(PreviousStateID);
-	GEngine->AddOnScreenDebugMessage(-1,3,FColor::Red,"Enter StateRun");
 	Character->GetCharacterMovement()->MaxWalkSpeed = 1000;
+	//GEngine->AddOnScreenDebugMessage(-1,3,FColor::Red,"Enter StateRun");
 }
 
 void USmashCharacterStateRun::StateExit(ESmashCharacterStateID NextStateID)
 {
 	Super::StateExit(NextStateID);
-	GEngine->AddOnScreenDebugMessage(-1,3,FColor::Red,"Exit StateWalk");
+	//GEngine->AddOnScreenDebugMessage(-1,3,FColor::Red,"Exit StateRun");
 	if(NextStateID == ESmashCharacterStateID::Walk) return;
 	Character->GetCharacterMovement()->MaxWalkSpeed = 0;
 }

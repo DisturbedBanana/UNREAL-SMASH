@@ -59,13 +59,10 @@ void USmashCharacterStateJump::StateInit(USmashCharacterStateMachine* InStateMac
 void USmashCharacterStateJump::StateEnter(ESmashCharacterStateID PreviousStateID)
 {
 	Super::StateEnter(PreviousStateID);
-	
-	if (Character->NbOfJumps > 0)
-	{
+	//UE_LOG(LogTemp, Warning, TEXT("Enter StateJump"));
 	CalculateJumpVariables();
 	Character->Jump();
 	Character->GetCharacterMovement()->MaxWalkSpeed = JumpWalkSpeed;
-	}
 }
 
 void USmashCharacterStateJump::StateExit(ESmashCharacterStateID NextStateID)
